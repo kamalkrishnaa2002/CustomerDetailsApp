@@ -1,0 +1,15 @@
+<!-- storephone/templates/storephone/store_form.html -->
+
+{% extends 'storephone/base.html' %}
+<!-- storephone/templates/storephone/store_form.html -->
+
+
+{% block content %}
+  <h2>Add Store Information</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <button type="submit">Submit</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,12 @@
+<!-- storephone/templates/storephone/store_list.html -->
+
+{% extends 'storephone/base.html' %}
+
+{% block content %}
+  <h2>Store List</h2>
+  <ul>
+    {% for store in stores %}
+      <li>{{ store.name }} - {{ store.phone_number }} - {{ store.category }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
