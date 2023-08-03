@@ -15,17 +15,28 @@ def store_form(request):
                 store = form.save(commit=False)
                 store.category = category
                 store.save()
-                return redirect('store_list')
+                return redirect('store_form')
     else:
         form = StoreForm()
     categories = Category.objects.all()
     return render(request, 'storephone/store_form.html', {'form': form, 'categories': categories})
 
 
+def store_list_view(request):
+    categories = Category.objects.all()
+    selected_category = request.GET.get('category')
 
-def store_list(request):
-    stores = Store.objects.all()
-    return render(request, 'storephone/store_list.html', {'stores': stores})
+    if selected_category:
+        stores = Store.objects.filter(category_id=selected_category)
+    else:
+        stores = Store.objects.all()
+
+    context = {
+        'stores': stores,
+        'categories': categories,
+    }
+
+    return render(request, 'storephone/store_list.html', context)
 
 
 def create_category(request):

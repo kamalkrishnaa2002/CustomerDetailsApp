@@ -1,12 +1,27 @@
-<!-- storephone/templates/storephone/store_list.html -->
-
 {% extends 'storephone/base.html' %}
 
 {% block content %}
   <h2>Store List</h2>
+  <form method="GET" id="categoryForm">
+    <label for="category">Select a Category:</label>
+    <select name="category" id="category">
+      <option value="">All Categories</option>
+      {% for category in categories %}
+        <option value="{{ category.id }}">{{ category.name }}</option>
+      {% endfor %}
+    </select>
+  </form>
   <ul>
     {% for store in stores %}
-      <li>{{ store.name }} - {{ store.phone_number }} - {{ store.category }}</li>
+      <li>{{ store.name }} -  <a href="tel:{{ store.phone_number }}">Call {{ store.phone_number }}</a> - {{ store.category }}</li>
     {% endfor %}
   </ul>
+
+  <script>
+    const categoryDropdown = document.getElementById('category');
+
+    categoryDropdown.addEventListener('change', () => {
+      document.getElementById('categoryForm').submit();
+    });
+  </script>
 {% endblock %}

@@ -5,7 +5,28 @@
 {% block content %}
 
 {% endblock %}
+<br><br>
+<button onclick="window.location.href='{% url 'create_category' %}'">Create category</button>
+<br><br>
+<button onclick="window.location.href='{% url 'store_list' %}'">Store List</button>
+<br><br>
+<button onclick="window.location.href='{% url 'store_form' %}'">Store Form</button>
 
-
+<script>
+    const categoryDropdown = document.getElementById('category');
+    const storeListContainer = document.getElementById('store-list-container');
+    
+    categoryDropdown.addEventListener('change', () => {
+      const selectedCategoryId = categoryDropdown.value;
+      
+      // Send AJAX request to update store list
+      fetch(`/get_stores/?category=${selectedCategoryId}`)
+        .then(response => response.text())
+        .then(data => {
+          storeListContainer.innerHTML = data;
+        });
+    });
+  </script>
+  
 </body>
 </html>
