@@ -23,25 +23,37 @@ def store_form(request):
 
 
 
+from django.shortcuts import render
+from .models import Store, Category
+
+
+
+
 def store_list_view(request):
     categories = Category.objects.all()
     selected_category = request.GET.get('category')
+    selected_status = request.GET.get('status')
+
+    stores = Store.objects.all()
 
     if selected_category:
-        stores = Store.objects.filter(category_id=selected_category, button_clicked=False)
-    else:
-        stores = Store.objects.all()
+        stores = stores.filter(category_id=selected_category)
 
-    for store in stores:
-        if store.button_clicked:
-            store.phone_number = ''  # Remove phone number if button clicked
+    if selected_status == "clicked":
+        stores = stores.filter(button_clicked=True)
+    elif selected_status == "unclicked":
+        stores = stores.filter(button_clicked=False)
 
     context = {
         'stores': stores,
         'categories': categories,
+        'selected_category': selected_category,
+        'selected_status': selected_status,
     }
 
     return render(request, 'storephone/store_list.html', context)
+
+
 
 
 def create_category(request):
@@ -61,3 +73,8 @@ def update_button_clicked(request, store_id):
         store.button_clicked = True
         store.save()
     return redirect('store_list')  # Replace 'store_list' with the name of your store list view
+
+
+def send_whatsapp(request, store_id):
+    store = Store.objects.get(id=store_id)
+    return redirect(f'https://api.whatsapp.com/send?phone={store.phone_number}')

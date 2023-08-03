@@ -8,4 +8,5 @@ urlpatterns = [
     path('list/', views.store_list_view, name='store_list'),
     path('category/create/', views.create_category, name='create_category'),
     path('update_button_clicked/<int:store_id>/', views.update_button_clicked, name='update_button_clicked'),
+    path('send_whatsapp/<int:store_id>/', views.send_whatsapp, name='send_whatsapp'),
 ]

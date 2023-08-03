@@ -2,21 +2,44 @@
 
 {% block content %}
   <h2>Store List</h2>
-  <form method="GET" id="categoryForm">
-    <!-- ... -->
+  <form method="GET" id="filterForm">
+    <label for="categorySelect">Filter by Category:</label>
+    <select id="categorySelect" name="category">
+      <option value="">All Categories</option>
+      {% for category in categories %}
+        <option value="{{ category.id }}" {% if category.id|slugify == selected_category %}selected{% endif %}>{{ category.name }}</option>
+      {% endfor %}
+    </select>
+    <label for="statusSelect">Filter by Status:</label>
+    <select id="statusSelect" name="status">
+      <option value="">All Status</option>
+      <option value="clicked" {% if selected_status == "clicked" %}selected{% endif %}>Clicked</option>
+      <option value="unclicked" {% if selected_status == "unclicked" %}selected{% endif %}>Unclicked</option>
+    </select>
   </form>
   <ul>
     {% for store in stores %}
-      {% if not store.button_clicked %}
-        <li id="store{{ store.id }}">
-          <form method="post" action="{% url 'update_button_clicked' store.id %}">
-            {% csrf_token %}
-            {{ store.name }} -
-            <button type="submit" id="phone{{ store.id }}" name="update_button">Call {{ store.phone_number }}</button>
-            - {{ store.category }}
-          </form>
-        </li>
-      {% endif %}
+      <li id="store{{ store.id }}">
+        {{ store.name }} -
+        <button type="button" id="phone{{ store.id }}" data-phone="{{ store.phone_number }}" class="call-button">Call</button>
+        {% if not store.button_clicked %}
+          {% if store.phone_number|length == 10 %}
+            <a href="https://wa.me/{{ store.phone_number }}?text=Hello" target="_blank" class="whatsapp-button">WhatsApp</a>
+          {% endif %}
+        {% else %}
+          Phone number has been clicked.
+        {% endif %}
+        - {{ store.category }}
+      </li>
     {% endfor %}
   </ul>
+  <script>
+    document.getElementById('categorySelect').addEventListener('change', function() {
+      document.getElementById('filterForm').submit();
+    });
+
+    document.getElementById('statusSelect').addEventListener('change', function() {
+      document.getElementById('filterForm').submit();
+    });
+  </script>
 {% endblock %}
