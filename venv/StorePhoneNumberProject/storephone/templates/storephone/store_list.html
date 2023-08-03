@@ -3,25 +3,20 @@
 {% block content %}
   <h2>Store List</h2>
   <form method="GET" id="categoryForm">
-    <label for="category">Select a Category:</label>
-    <select name="category" id="category">
-      <option value="">All Categories</option>
-      {% for category in categories %}
-        <option value="{{ category.id }}">{{ category.name }}</option>
-      {% endfor %}
-    </select>
+    <!-- ... -->
   </form>
   <ul>
     {% for store in stores %}
-      <li>{{ store.name }} -  <a href="tel:{{ store.phone_number }}">Call {{ store.phone_number }}</a> - {{ store.category }}</li>
+      {% if not store.button_clicked %}
+        <li id="store{{ store.id }}">
+          <form method="post" action="{% url 'update_button_clicked' store.id %}">
+            {% csrf_token %}
+            {{ store.name }} -
+            <button type="submit" id="phone{{ store.id }}" name="update_button">Call {{ store.phone_number }}</button>
+            - {{ store.category }}
+          </form>
+        </li>
+      {% endif %}
     {% endfor %}
   </ul>
-
-  <script>
-    const categoryDropdown = document.getElementById('category');
-
-    categoryDropdown.addEventListener('change', () => {
-      document.getElementById('categoryForm').submit();
-    });
-  </script>
 {% endblock %}

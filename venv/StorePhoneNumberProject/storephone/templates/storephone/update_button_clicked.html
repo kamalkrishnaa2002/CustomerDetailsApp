@@ -1,11 +1,11 @@
+<!-- update_button_clicked.html -->
 {% extends 'storephone/base.html' %}
 
 {% block content %}
-  <h2>Add Store Information</h2>
+  <h2>Update Button Clicked</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    
-    <button type="submit">Submit</button>
+    <button type="submit">Update Button Clicked</button>
   </form>
 {% endblock %}
