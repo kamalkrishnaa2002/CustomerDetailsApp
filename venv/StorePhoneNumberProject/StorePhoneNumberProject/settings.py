@@ -81,14 +81,25 @@ WSGI_APPLICATION = 'StorePhoneNumberProject.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'customerdetails', # example - blog_data
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'customerdetails', # example - blog_data
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'testdjango',
+        'USER': 'postgres',
+        'PASSWORD': 'vipvip6#',
+        'HOST': 'localhost',  # or your database host
+        'PORT': '5432',  # or your database port
     }
 }
 
