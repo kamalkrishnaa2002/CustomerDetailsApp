@@ -1,11 +1,13 @@
 {% extends 'storephone/base.html' %}
 
 {% block content %}
-  <h2>Add Store Information</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    
-    <button type="submit">Submit</button>
-  </form>
+  <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; background-color: #f8f8f8; border-radius: 5px;">
+    <h2 style="margin-bottom: 20px;">Add Store Information</h2>
+    <form method="post" class="store-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      
+      <button type="submit" style="background-color: #007bff; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Submit</button>
+    </form>
+  </div>
 {% endblock %}
