@@ -54,6 +54,11 @@
             font-size: 12px;
         }
     }
+
+
+    .clicked {
+        display: none;
+    }
 </style>
 
 <h2>Store List</h2>
@@ -62,19 +67,7 @@
 
 <div class="sidenav" id="filterSidebar" style="display: none;">
     <form method="GET" id="filterForm">
-        <label for="categorySelect">Filter by Category:</label>
-        <select id="categorySelect" name="category">
-            <option value="">All Categories</option>
-            {% for category in categories %}
-                <option value="{{ category.id }}" {% if category.id|slugify == selected_category %}selected{% endif %}>{{ category.name }}</option>
-            {% endfor %}
-        </select>
-        <label for="statusSelect">Filter by Status:</label>
-        <select id="statusSelect" name="status">
-            <option value="">All Status</option>
-            <option value="clicked" {% if selected_status == "clicked" %}selected{% endif %}>Clicked</option>
-            <option value="unclicked" {% if selected_status == "unclicked" %}selected{% endif %}>Unclicked</option>
-        </select>
+        <!-- Your filter form options -->
         <button type="submit">Apply Filters</button>
     </form>
 </div>
@@ -86,27 +79,24 @@
         <th>WhatsApp</th>
     </tr>
     {% for store in stores %}
-    <tr>
+    <tr id="store-row-{{ store.id }}" {% if store.button_clicked %}class="clicked"{% endif %}>
         <td>{{ store.name }}</td>
         <td>
-            
-            
-            <a href="tel:{{ store.phone_number }}" class="call-button">Call {{ store.phone_number }}</a>
+            <a href="tel:{{ store.phone_number }}" class="call-button" data-store-id="{{ store.id }}" onclick="updateAndHideRow(this)">Call {{ store.phone_number }}</a>
         </td>
         <td>
             {% if store.phone_number|length == 10 %}
             <a href="https://wa.me/+91{{ store.phone_number }}" class="whatsapp-button">WhatsApp</a>
-
             {% elif store.phone_number|length == 12 %}
             <a href="https://wa.me/+{{ store.phone_number }}" class="whatsapp-button">WhatsApp</a>
-
-        {% else %}
+            {% else %}
             Land line Number
-        {% endif %}
+            {% endif %}
         </td>
     </tr>
     {% endfor %}
 </table>
+
 <script>
     const toggleButton = document.getElementById('toggleFilterButton');
     const filterSidebar = document.getElementById('filterSidebar');
@@ -118,13 +108,77 @@
         }, 6000);
     });
 
-    document.getElementById('categorySelect').addEventListener('change', function() {
-        document.getElementById('filterForm').submit();
+    const callButtons = document.querySelectorAll('.call-button');
+
+    callButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const storeId = this.getAttribute('data-store-id');
+            updateButtonClicked(storeId, this);
+        });
     });
 
-    document.getElementById('statusSelect').addEventListener('change', function() {
-        document.getElementById('filterForm').submit();
-    });
+    function updateButtonClicked(storeId, button) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `/update_button_clicked/${storeId}/`, true);
+
+        const csrfToken = getCookie('csrftoken'); // Define the getCookie function
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    button.classList.add('clicked');
+                    button.innerText = 'Clicked';
+                } else if (xhr.status === 400) {
+                    console.error('Button was already clicked.');
+                } else {
+                    console.error('Error updating button clicked status.');
+                }
+            }
+        };
+
+        xhr.send();
+    }
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function updateAndHideRow(button) {
+        const storeId = button.getAttribute('data-store-id');
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `/update_button_clicked/${storeId}/`, true);
+
+        const csrfToken = getCookie('csrftoken'); // Define the getCookie function
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    const row = document.getElementById(`store-row-${storeId}`);
+                    row.classList.add('clicked'); // Hide the row
+                } else {
+                    // Handle error if necessary
+                    console.error('Error updating button clicked status.');
+                }
+            }
+        };
+
+        xhr.send();
+    }
 </script>
 
 {% endblock %}
