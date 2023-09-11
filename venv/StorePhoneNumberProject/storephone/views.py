@@ -24,6 +24,7 @@ def store_form(request):
     return render(request, 'storephone/store_form.html', context)
 
 
+
 def store_list_view(request):
     categories = Category.objects.all()
     selected_category = request.GET.get('category')
@@ -36,8 +37,6 @@ def store_list_view(request):
 
     if selected_status == "clicked":
         stores = stores.filter(button_clicked=True)
-        # Update clicked_at_date for clicked stores
-        Store.objects.filter(pk__in=stores).update(clicked_at_date=timezone.now())
     elif selected_status == "unclicked":
         stores = stores.filter(button_clicked=False)
 

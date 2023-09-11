@@ -56,9 +56,7 @@
     }
 
 
-    .clicked {
-        display: none;
-    }
+   
 </style>
 
 <h2>Store List</h2>
@@ -67,7 +65,21 @@
 
 <div class="sidenav" id="filterSidebar" style="display: none;">
     <form method="GET" id="filterForm">
-        <!-- Your filter form options -->
+        <label for="category">Filter by Category:</label>
+        <select name="category" id="category">
+            <option value="" {% if not selected_category %}selected{% endif %}>All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}" {% if category.id == selected_category %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    
+        <label for="status">Filter by Status:</label>
+        <select name="status" id="status">
+            <option value="" {% if not selected_status %}selected{% endif %}>All Status</option>
+            <option value="clicked" {% if selected_status == "clicked" %}selected{% endif %}>Clicked</option>
+            <option value="unclicked" {% if selected_status == "unclicked" %}selected{% endif %}>Unclicked</option>
+        </select>
+    
         <button type="submit">Apply Filters</button>
     </form>
 </div>
@@ -156,29 +168,26 @@
         }
         return cookieValue;
     }
-    function updateAndHideRow(button) {
-        const storeId = button.getAttribute('data-store-id');
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', `/update_button_clicked/${storeId}/`, true);
 
-        const csrfToken = getCookie('csrftoken'); // Define the getCookie function
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.setRequestHeader('X-CSRFToken', csrfToken);
+    // Function to show or hide elements with the 'clicked' class based on the filter selection
+    function applyFilter() {
+        const selectedStatus = document.getElementById('status').value;
+        const clickedElements = document.querySelectorAll('.clicked');
 
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    const row = document.getElementById(`store-row-${storeId}`);
-                    row.classList.add('clicked'); // Hide the row
-                } else {
-                    // Handle error if necessary
-                    console.error('Error updating button clicked status.');
-                }
-            }
-        };
-
-        xhr.send();
+        if (selectedStatus === 'clicked') {
+            clickedElements.forEach(element => {
+                element.style.display = 'table-row'; // Display clicked elements
+            });
+        } else {
+            clickedElements.forEach(element => {
+                element.style.display = 'none'; // Hide clicked elements
+            });
+        }
     }
+
+    // Add an event listener to the filter select element
+    document.getElementById('status').addEventListener('change', applyFilter);
+
 </script>
 
 {% endblock %}
